@@ -1,0 +1,32 @@
+% Interfacing Stepper Motors and Easy Driver with Beaglebone black
+
+import Adafruit_BBIO.GPIO as GPIO
+import time
+i=0
+j=0
+GPIO.setup("P9_11",GPIO.OUT)
+GPIO.setup("P9_12",GPIO.OUT)
+GPIO.setup("P9_15",GPIO.OUT)
+GPIO.setup("P9_16",GPIO.OUT)
+while True:
+i=0
+for i in range(0,500):
+GPIO.output("P9_11", GPIO.LOW)
+time.sleep(0.00005)
+for i in range(0,10):
+GPIO.output("P9_12", GPIO.LOW)
+GPIO.output("P9_12", GPIO.HIGH)
+time.sleep(0.00005)
+GPIO.output("P9_11", GPIO.LOW)
+time.sleep(0.00005)
+time.sleep(0.05)
+for i in range(0,500):
+GPIO.output("P9_15", GPIO.LOW)
+time.sleep(0.00005)
+for i in range(0,10):
+GPIO.output("P9_16", GPIO.LOW)
+GPIO.output("P9_16", GPIO.HIGH)
+time.sleep(0.00005)
+GPIO.output("P9_15", GPIO.LOW)
+time.sleep(0.00005)
+time.sleep(0.05)

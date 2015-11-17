@@ -1,0 +1,29 @@
+*% Email the image using Gmail SMTP server
+  The code is in python. We import SMTP library for it*%
+
+
+import smtplib
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+msg = MIMEMultipart()
+fromaddr = 'YOUR MAIL ID ’
+toaddr = 'RECEVIDER MAIL ID ‘
+msgRoot = MIMEMultipart('related')
+msgRoot['Subject'] = 'Microscope data'
+msgRoot['From'] = 'YOUR MAIL ID '
+msgRoot['To'] = 'RECEVIDER MAIL ID’
+body = "Python test mail"
+fp = open('finout2.jpg','rb') % Attachment
+msgImage = MIMEImage(fp.read())
+fp.close()
+msgImage.add_header('Content-ID', '<image1>')
+msgRoot.attach(msgImage)
+# Create an instance in SMTP server
+server = smtplib.SMTP('smtp.gmail.com:587')
+# Start the server:
+server.starttls()
+server.ehlo()
+server.login( 'YOUR MAIL ID’, ' YOUR PASSWARD')
+# Send the email
+server.sendmail(fromaddr,toaddr,msgRoot.as_string())
+server.quit()

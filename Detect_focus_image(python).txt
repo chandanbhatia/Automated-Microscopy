@@ -1,0 +1,95 @@
+*% Detect focus image and save them using python with BeagleBone Black
+
+   In the code image is converted into RGB to Gray Scale and its in
+   2D array. For each block of array we find intensity of a
+   particle point and its point which is near to it in all X-Y axis, and then
+   we subtract each point by the particular point and sum them. Like
+   and according to output we show whether image is focused, near
+   focus or non focus %*
+
+import cv
+import cv2
+import Image
+import ImageEnhance
+import ImageFilter
+from PIL import Image
+import Adafruit_BBIO.GPIO as GPIO
+import time
+import numpy as np
+from PIL import ImageDraw
+import math
+i = 0
+p = 0
+y = 0
+a = [0]
+b = [0]
+op = [0]
+def task():
+n=25
+m=25
+p=0
+r=0
+inten = [0,0,0]
+inten1 = [0,0,0]
+inten2 = [0,0,0]
+inten3 = [0,0,0]
+inten4 = [0,0,0]
+i=0
+while n <160:
+while m <225:
+print(" m is ",m)
+print(" n is ",n)
+z=0
+img = cv2.imread("fin4.jpg")
+r = img[m,n]
+inten =inten + r
+r = img[m,n-15]
+inten1 =inten1 + r
+r = img[m+15,n]
+inten2 =inten2 + r
+r = img[m,n+15]
+inten3 =inten3 + r
+r = img[m-15,n]
+inten4 =inten4 + r
+z = abs(inten[0]-inten1[0])+ abs(inten[0]-inten2[0])+ abs(inten[0]-inten3[0])+ abs(inten[0]-inten4[0])
+z = z/4
+i = i+1
+print("value of p ",i)
+a[i]= a[i]+z;
+print("value of a[i] ",a[i])
+print (" value of i ", i)
+m=m+50
+m=25
+n=n+50
+while p <=i:
+b[y] = b[y] + a[p]
+p=p+1
+b[y]=b[y]/10;
+print("value is ",b[y])
+camcapture = cv.CreateCameraCapture(0) % image capture and setting frame of captured image
+cv.SetCaptureProperty(camcapture,cv.CV_CAP_PROP_FRAME_WIDTH, 1080)
+cv.SetCaptureProperty(camcapture,cv.CV_CAP_PROP_FRAME_HEIGHT, 480)
+frame = cv.QueryFrame(camcapture)
+cv.SaveImage('fin2.jpg',frame)
+im = Image.open("fin2.jpg")
+im = Image.open("fin2.jpg")
+area = im.crop((400,120,650,650)) % crop the useful part of image
+area.save('ag.jpg')
+im = Image.open("ag.jpg")
+im= im.resize((300,240),Image.ANTIALIAS)
+im.save("fin3.jpg",quality=100)
+print 'Image Captured and Compressed'
+im = Image.open("fin3.jpg")
+im = im.convert('L')
+im.save("fin4.jpg",quality=100)
+task()
+print(" final value is ", b[0])
+if (b[0] >45):
+print("fully focused")
+elif (b[0]>30):
+print ("near focus")
+if (b[0]<30):
+print(“non focus “)
+if (b[y-1] > b[y]):
+if (b[y-1] > 45):
+print (“missed the focus “)

@@ -1,0 +1,142 @@
+*% Detect focus image and save them using OpenCV and Visual studio C++
+
+   
+   In the code image is converted into RGB to Gray Scale and its in
+   2D array. For each block of array we find intensity of a
+   particle point and its point which is near to it in all X-Y axis, and then
+   we subtract each point by the particular point and sum them. Like
+   and according to output we show whether image is focused, near
+   focus or non focus %*
+
+
+#include <iostream>
+#include <opencv2/opencv.hpp>
+#include<sstream>
+#include <time.h>
+#include <Windows.h>
+#include <stdlib.h>
+#include <string.h>
+using namespace cv;
+using namespace std;
+Mat imgGray;
+int o=0;
+int x=0;
+int n=0;
+int m=0;
+int i= 0;
+int p= 0;
+int w=0;
+int z=0;
+int y=0;
+float a[100];
+float b[100];
+float c=0;
+char ch[3],name[10]="n";
+Mat frame;
+char directory1[40] ="C:\\Users\\Chandan\\Desktop\\pz\\focus";
+char directory2[40] ="C:\\Users\\Chandan\\Desktop\\pz\\Nefocus";
+char directory3[40] ="C:\\Users\\Chandan\\Desktop\\pz\\nonfocus";
+int k=0, l=0 , s=0;
+int value (int &x, int &y)
+{
+int intensity = (int)imgGray.at<uchar>(y,x); % for calculating intensity
+int intensity1 = (int)imgGray.at<uchar>(y-15,x);
+int intensity2 = (int)imgGray.at<uchar>(y,x+15);
+int intensity3 = (int)imgGray.at<uchar>(y+15,x);
+int intensity4 = (int)imgGray.at<uchar>(y,x-15);
+a[i]= abs(intensity-intensity1) + abs(intensity-intensity2) + abs(intensity-intensity3) + abs(intensity-intensity4);
+a[i]=a[i]/4;
+i=i+1;
+return a[i];
+}
+int task (int &y)
+{
+for(n=125; n<360; n= n+50)
+{
+for (m=125; m<550; m= m+50)
+{
+value(m,n);
+}
+m=0;
+}
+n=0;
+m=0;
+for(p=0; p<i; p= p+1)
+{
+b[y]= b[y]+ a[p];
+}
+b[y]=b[y]/15;
+c = b[y]/90;
+c = c*100;
+cout << "value is (" << b[y] << ") x value is (" << y<<") " << endl;
+cout << "percentage is (" << c << ") "<< endl;
+if (b[y] > 45)
+{
+cout << " ----focused---- " << endl;
+Sleep(100);
+imwrite(cv::format( "%s/image%03d.jpg",directory1,k ),imgGray);
+k=k+1;
+}
+else if (b[y] > 30)
+{
+cout << " ----Near Focus Point---- " << endl;
+imwrite(cv::format( "%s/image%03d.jpg",directory2,l ),imgGray);
+l=l+1;
+}
+if ( b[y] <25)
+{
+cout << " ----fully non Focus---- " << endl;
+imwrite(cv::format( "%s/image%03d.jpg",directory3,m ),imgGray);
+s=s+1;
+}
+if( b[y-1] > 45)
+{
+if ( b[y]< 45)
+{
+cout << " ----Miss the focus at Backkkk---- " << endl;
+Sleep(1000);
+}
+}
+cout<< " " << endl << endl;
+p=p+1;
+y=y+1;
+a[25]=0;
+i=0;
+return b[x];
+}
+int main( int argc, char** argv )
+{
+VideoCapture cap(1); //capture the video from web cam
+cap >> frame;
+if ( !cap.isOpened() ) // if not success, exit program
+{
+cout << "Cannot open the web cam" << endl;
+return -1;
+}
+while (true)
+{
+Mat imgOriginal;
+bool bSuccess = cap.read(imgOriginal); // read a new frame from video
+if (!bSuccess) //if not success, break loop
+{
+cout << "Cannot read a frame from video stream" << endl;
+break;
+}
+cvtColor(imgOriginal, imgGray,CV_BGR2GRAY);
+task(y);
+imshow("Original", imgOriginal);
+if(y > 10)
+{
+Sleep(100);
+if ( y > 100 )
+{
+y=11;
+}
+}
+if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+{
+cout << "esc key is pressed by user" << endl;
+break;
+}
+}
+return 0;
